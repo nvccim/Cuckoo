@@ -16,29 +16,30 @@
 
 - Install required packages 
 
-		sudo apt-get -y install python python-pip python-dev libffi-dev libssl-dev python-virtualenv python-setuptools libjpeg-dev zlib1g-dev swig mongodb postgresql libpq-dev virtualbox tcpdump apparmor-utils
+		sudo su
+		apt-get -y install python python-pip python-dev libffi-dev libssl-dev python-virtualenv python-setuptools libjpeg-dev zlib1g-dev swig mongodb postgresql libpq-dev virtualbox tcpdump apparmor-utils
 
 - Configure tcpdump 
 
-		sudo aa-disable /usr/sbin/tcpdump
+		aa-disable /usr/sbin/tcpdump
 
-		sudo adduser --disabled-password --gecos "" cuckootest
+		adduser --disabled-password --gecos "" cuckootest
 
-		sudo groupadd pcap
+		groupadd pcap
 
-		sudo usermod -a -G pcap cuckootest
+		usermod -a -G pcap cuckootest
 
-		sudo chgrp pcap /usr/sbin/tcpdump
+		chgrp pcap /usr/sbin/tcpdump
 
-		sudo setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
+		setcap cap_net_raw,cap_net_admin=eip /usr/sbin/tcpdump
 
 - Install M2Crypto:
 
-    		sudo pip install m2crypto
+    		pip install m2crypto
 
 - Add the account you created before to vboxusers group:
 
-    		sudo usermod -a -G vboxusers cuckootest
+  		usermod -a -G vboxusers cuckootest
 
 - Create a virtual environment by using a script :
 
@@ -57,7 +58,7 @@
 
 - Install this packages again to make sure that there no missing package
 
-		sudo apt-get -y install build-essential libssl-dev libffi-dev python-dev genisoimage zlib1g-dev libjpeg-dev python-pip python-virtualenv python-setuptools swig
+		 apt-get -y install build-essential libssl-dev libffi-dev python-dev genisoimage zlib1g-dev libjpeg-dev python-pip python-virtualenv python-setuptools swig
 
 ## Setup the VirtualBox and its networking
 
@@ -76,17 +77,17 @@
 
 - Configure Firewall :
 
-		sudo sysctl -w net.ipv4.conf.vboxnet0.forwarding=1
-		sudo sysctl -w net.ipv4.conf.ens33.forwarding=1
-		sudo iptables -t nat -A POSTROUTING -o *your network adapter name* -s 192.168.56.0/24 -j MASQUERADE
- 		sudo iptables -P FORWARD DROP
-  		sudo iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
-		sudo iptables -A FORWARD -s 192.168.56.0/24 -j ACCEPT
+		sysctl -w net.ipv4.conf.vboxnet0.forwarding=1
+		sysctl -w net.ipv4.conf.ens33.forwarding=1
+		iptables -t nat -A POSTROUTING -o *your network adapter name* -s 192.168.56.0/24 -j MASQUERADE
+ 		iptables -P FORWARD DROP
+  		iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+		iptables -A FORWARD -s 192.168.56.0/24 -j ACCEPT
 
 - Enable IP forwarding in the kernel. To that, you have to execute the following commands:
 
-		echo 1 | sudo tee -a /proc/sys/net/ipv4/ip_forward
-		sudo sysctl -w net.ipv4.ip_forward=1
+		echo 1 | tee -a /proc/sys/net/ipv4/ip_forward
+		sysctl -w net.ipv4.ip_forward=1
 
 ## Setting up the Guest machine :
 
@@ -119,10 +120,10 @@ Setup manually adapter : (open network settings > modify network adapter > propr
 
 ## Setup agent.py :
 
-	(sandbox) cuckoo@ubuntu:~$ cuckoo
-	(sandbox) cuckoo@ubuntu:~$ cd .cuckoo/agent
-	(sandbox) cuckoo@ubuntu:~./cuckoo/agent$ zip agent.zip agent.py
-	(sandbox) cuckoo@ubuntu:~./cuckoo/agent$ python -m SimpleHTTPServer 8080
+	(sandbox) root@ubuntu:~$ cuckoo
+	(sandbox) root@ubuntu:~$ cd .cuckoo/agent
+	(sandbox) root@ubuntu:~./cuckoo/agent$ zip agent.zip agent.py
+	(sandbox) root@ubuntu:~./cuckoo/agent$ python -m SimpleHTTPServer 8080
 
 - Back to windows 7 :
 
@@ -145,21 +146,16 @@ Setup manually adapter : (open network settings > modify network adapter > propr
 
 ## Setup Cuckoo :
   
-- Open 3 terminal with sandbox envirenment :
+- Open 4 terminal with sandbox envirenment :
 
-		cuckoo@ubuntu:~$ workon sandbox
+		cuckoo@ubuntu:~$ sudo su
+		root@ubuntu:~$ workon sandbox
   
 - First Terminal :
 	
-		(sandbox) cuckoo@ubuntu:~$ cd .cuckoo/conf/
-
-- Second Terminal :
-
-		(sandbox) cuckoo@ubuntu:~$ cuckoo rooter --sudo --group cuckoo
-
-- Back to First terminal :
-    
-		edit routing.conf :
+		(sandbox) root@ubuntu:~$ cd .cuckoo/conf/
+  
+  		edit routing.conf :
 		internet = ens33
 
   		edit reporting.conf :
@@ -178,13 +174,17 @@ Setup manually adapter : (open network settings > modify network adapter > propr
 			ip = 192.168.56.101
 			snapshot = snapsnap
 
+- Second Terminal :
+
+		(sandbox) root@ubuntu:~$ cuckoo rooter --sudo --group root
+
 - Open third Terminal :
   
 		run cuckoo :
-	   	(sandbox) cuckoo@ubuntu:~$ cuckoo
+	   	(sandbox) root@ubuntu:~$ cuckoo
 
 - Open fourth Terminal :
   
-	   	(sandbox) cuckoo@ubuntu:~$ cuckoo web runserver
+	   	(sandbox) root@ubuntu:~$ cuckoo web runserver
 
-## Done !!
+## Done 
