@@ -78,7 +78,7 @@
 - Configure Firewall :
 
 		sysctl -w net.ipv4.conf.vboxnet0.forwarding=1
-		sysctl -w net.ipv4.conf.ens33.forwarding=1
+		sysctl -w net.ipv4.conf.*your network adapter name*.forwarding=1
 		iptables -t nat -A POSTROUTING -o *your network adapter name* -s 192.168.56.0/24 -j MASQUERADE
  		iptables -P FORWARD DROP
   		iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
